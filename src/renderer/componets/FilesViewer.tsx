@@ -1,7 +1,13 @@
 import React from 'react'
 import { IconFolderOpen, IconFolder, IconFile } from "./Icons"
 
-const FilesViewer = ({ files, onBack, onOpen }: any) => {
+interface FilesViewerInput {
+    files: any[];
+    onBack: (e: any) => void;
+    onOpen: (path: string) => void;
+}
+
+const FilesViewer = ({ files, onBack, onOpen }: FilesViewerInput) => {
   return (
     <table className="table">
         <tbody>
@@ -14,9 +20,9 @@ const FilesViewer = ({ files, onBack, onOpen }: any) => {
             </tr>
 
             {
-                files.map(({ name, directory, size }: any) => {
+                files.map(({ name, directory, size }, i) => {
                     return (
-                        <tr className="clickable" onClick={() => directory && onOpen(name)}>
+                        <tr key={i} className="clickable" onClick={() => directory && onOpen(name)}>
                             <td className="icon-row">
                                 {directory ? <IconFolder /> : <IconFile />}
                             </td>
