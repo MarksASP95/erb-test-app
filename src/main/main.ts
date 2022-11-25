@@ -107,7 +107,6 @@ const createWindow = async () => {
           size: stats.isFile() ? formatSize(stats.size ?? 0) : null,
           directory: stats.isDirectory()
         };
-        console.log(returnable)
         return returnable
       })
       .sort((a: any, b: any) => {
