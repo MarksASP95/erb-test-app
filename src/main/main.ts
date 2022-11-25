@@ -14,6 +14,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import fs from "fs";
+import pathModule from "path";
 
 class AppUpdater {
   constructor() {
@@ -78,8 +80,43 @@ const createWindow = async () => {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      nodeIntegration: true,
     },
   });
+
+  const formatSize = (size: number): string => {
+    const i = Math.floor(Math.log(size) / Math.log(1024));
+    return (
+      (size / Math.pow(1024, i)).toFixed(2) + 
+      " " +
+      ["B", "kB", "MB", "GB", "TB"][i]
+    );
+  }
+
+  ipcMain.handle('joinPaths', (_, args: string[]) => pathModule.join(...args));
+  ipcMain.handle('getAppPath', () => app.getAppPath());
+  ipcMain.handle('getFiles', (_, path: string) => {
+    return fs
+      .readdirSync(path)
+      .map((file) => {
+
+  
+        const stats = fs.statSync(pathModule.join(path, file))
+        const returnable = {
+          name: file,
+          size: stats.isFile() ? formatSize(stats.size ?? 0) : null,
+          directory: stats.isDirectory()
+        };
+        console.log(returnable)
+        return returnable
+      })
+      .sort((a: any, b: any) => {
+        if (a.directory === b.directory) {
+          return a.name.localeCompare(b.name);
+        }
+        return a.directory ? -1 : 1;
+      }); 
+  })
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 

@@ -1,6 +1,8 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { contextBridge, ipcRenderer, IpcRendererEvent, app } from 'electron';
 
-export type Channels = 'ipc-example';
+export type Channels = 'ipc-example' | 'app-obj';
+
+const fs = require("fs")
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -20,4 +22,7 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
   },
+  getAppPath: () => ipcRenderer.invoke("getAppPath"),
+  getFiles: (path: string) => ipcRenderer.invoke("getFiles", path),
+  joinPaths: (...args: string[]) => ipcRenderer.invoke("joinPaths", args)
 });
