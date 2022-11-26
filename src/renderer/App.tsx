@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import icon from '../../assets/icon.svg';
 import './App.css';
 import FilesViewer from './componets/FilesViewer'
+import DnDContainer from './componets/dnd/DnDContainer';
 
 const MainComponent = () => {
 
@@ -70,10 +71,23 @@ const MainComponent = () => {
 
 export default function App() {
   return (
+    <>
     <Router>
+      <div className="container">
+        <div className="row">
+          <Link to="/file-explorer">File explorer</Link>
+        </div>
+        <div className="row">
+          <Link to="/dnd">DnD</Link>
+        </div>
+      </div>
+
+      <br />
       <Routes>
-        <Route path="/" element={<MainComponent />} />
+        <Route path="/file-explorer" element={<MainComponent />} />
+        <Route path="/dnd" element={<DnDContainer />} />
       </Routes>
     </Router>
+    </>
   );
 }
